@@ -34,12 +34,12 @@
   (testing "fight"
     (let [s1 (mk-sut :name "winner" :life 1000)
           s2 (mk-sut :name "looser" :life 50)
-          score (fight s1 s2)]
+          score (fight s1 s2 (fn [x y]))]
      (is (= (:name (:win score) "winner")))
      (is (= (:name (:losser score) "looser")))))
   )
 
 (deftest run-game []
   (testing "run game"
-    (is (not (nil? (game "s1" "s2" size))))))
+    (is (not (nil? (game "s1" "s2" size print-moved print-attacked print-game-started))))))
 
