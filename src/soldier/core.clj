@@ -1,7 +1,5 @@
 (ns soldier.core)
 
-(def size 3)
-
 (defn is-location-equal?
   [l1 l2]
   (and (= (:x l1) (:x l2)) (= (:y l1) (:y l2))))
@@ -15,7 +13,7 @@
   (> 1 (:life s)))
 
 (defn- go
-  [s dir]
+  [s dir size]
   (let [d (if (contains? #{:left :right} dir) :x :y)
         f (if (contains? #{:left :up} dir) dec inc)
         next-pos (f (get-in s [:location d]))]
@@ -24,20 +22,20 @@
         s)))
 
 (defn go-left
-  [s]
-  (go s :left))
+  [s size]
+  (go s :left size))
 
 (defn go-up
-  [s]
-  (go s :up))
+  [s size]
+  (go s :up size))
 
 (defn go-right
-  [s]
-  (go s :right))
+  [s size]
+  (go s :right size))
 
 (defn go-down
-  [s]
-  (go s :down))
+  [s size]
+  (go s :down size))
 
 (defn fight
  [sol1 sol2]
@@ -57,20 +55,20 @@
       {:win @s1 :loose @s2}))))
 
 (defn game 
-  [s1-name s2-name]
+  [s1-name s2-name size]
   (let [s1 (atom (mk-soldier s1-name :location {:x (dec size) :y 0}))
         s2 (atom (mk-soldier s2-name :location {:x 0 :y (dec size)}))
-        random-move (fn [s] 
+        random-move (fn [s size]
                         (let [m (rand-int 4)]
                           (case m
-                            0 (go-up s)
-                            1 (go-down s)
-                            2 (go-left s)
-                            3 (go-right s))))]
+                            0 (go-up s size)
+                            1 (go-down s size)
+                            2 (go-left s size)
+                            3 (go-right s size))))]
         (do
           (while (not (is-location-equal? (:location @s1) (:location @s2)))
-             (swap! s1 random-move)
+             (swap! s1 random-move size)
              (println s1-name " moved --> " @s1)
-             (swap! s2 random-move)
+             (swap! s2 random-move size)
              (println s2-name " moved --> " @s2))
           (fight @s1 @s2))))
